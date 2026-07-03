@@ -8,11 +8,10 @@ fn main(){
         std::process::exit(1);
     }); */
 
-    let mut mat1 = Matrix::fill(3, 2,1.0);
-    let mut mat2 = mat1.transpose();
+    let mat1 = Matrix::random(3, 2);
+    mat1.print();
 
-    mat2.scale(25.0);
-    
+    let mat2 = mat1.transpose();
     mat2.print();
 
 }
@@ -22,8 +21,8 @@ mod tests{
     use super::*;
     #[test]
     fn test_addition_identity(){
-        let mat1 = Matrix::fill(1000, 1000, 10.0);
-        let mat2 = Matrix::fill(1000, 1000, 0.0);
+        let mat1 = Matrix::fill(3, 3, 10.0);
+        let mat2 = Matrix::fill(3, 3, 0.0);
         let mat3 = mat1.add(&mat2).unwrap();
 
         assert_eq!(mat3.data,mat1.data);

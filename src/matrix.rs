@@ -19,14 +19,18 @@ pub enum MatrixError{
 impl Matrix{
     //empty vector
     pub fn empty(rows: usize,cols: usize) -> Self{
-        Matrix { rows, cols ,data: Vec::new() }
+        Matrix{
+            rows,
+            cols ,
+            data: vec![0.0; rows * cols] 
+        }
     }
     //fills from 1.0 to 10.0
     pub fn random(rows: usize, cols: usize) -> Self {
         let mut mat =  Matrix::empty(rows,cols);
 
-        for _ in 0..rows * cols{
-            mat.data.push(rand::random_range(1.0..10.0));
+        for i in 0..rows * cols{
+            mat.data[i] = rand::random_range(1.0..10.0);
         }    
         mat
     }
@@ -34,8 +38,8 @@ impl Matrix{
     pub fn fill(rows : usize,cols : usize,value : f64) -> Self{
         let mut mat = Matrix::empty(rows,cols);
 
-        for _ in 0..rows * cols{
-            mat.data.push(value);
+        for i in 0..rows * cols{
+            mat.data[i];
         } 
         mat
     }
@@ -48,8 +52,8 @@ impl Matrix{
     pub fn fill_existing(&mut self,value : f64) {
         self.clear();
 
-        for _ in 0..self.rows * self.cols{
-            self.data.push(value);
+        for i in 0..self.rows * self.cols{
+            self.data[i] = value;
         }
     }
 
@@ -57,7 +61,7 @@ impl Matrix{
     pub fn print(&self){
         for i in 0..self.rows{
             for j in 0..self.cols{
-                print!("{} ",self.at(i,j).unwrap());
+                print!("{:.2} ",self.at(i,j).unwrap());
             }
             println!("");
         }
@@ -113,11 +117,9 @@ impl Matrix{
 
         let mut res = Matrix::empty(self.rows, self.cols);
 
-        for i in 0..self.rows{
-            for j in 0..self.cols{
-                res.data.push(self.at(i,j).unwrap() + rhs.at(i,j).unwrap());
-            }
-        }
+        for i in 0..self.rows * self.cols{
+            res.data[i] = self.data[i] + rhs.data[i];
+        }  
         Ok(res)
     }
 
@@ -129,11 +131,9 @@ impl Matrix{
 
         let mut res = Matrix::empty(self.rows, self.cols);
 
-        for i in 0..self.rows{
-            for j in 0..self.cols{
-                res.data.push(self.at(i,j).unwrap() - rhs.at(i,j).unwrap());
-            }
-        }
+        for i in 0..self.rows * self.cols{
+            res.data[i] = self.data[i] - rhs.data[i];
+        }  
         Ok(res)
     }
 
@@ -149,7 +149,8 @@ impl Matrix{
                 for k in 0..self.cols{
                     sum += self.at(i, k).unwrap() * rhs.at(k,j).unwrap();
                 }
-                res.data.push(sum);
+                let idx = res.get_linear_index(i, j).unwrap();
+                res.data[idx] = sum;
             }
         }
         Ok(res)
@@ -157,8 +158,7 @@ impl Matrix{
     
     pub fn transpose(&self) -> Matrix{
         let mut res = Matrix::empty(self.cols, self.rows);
-        res.data = vec![0.0; self.rows * self.cols];
-
+      
         for i in 0..self.rows{
             for j in 0..self.cols{
                 let res_idx = res.get_linear_index(j, i).unwrap();
@@ -170,11 +170,8 @@ impl Matrix{
     }
 
     pub fn scale(&mut self,scalar : f64){
-        for i in 0..self.rows{
-            for j in 0..self.cols{
-                let idx = self.get_linear_index(i, j).unwrap();
-                self.data[idx] = scalar;
-            }
+        for i in 0..self.rows * self.cols{
+            self.data[i] *= scalar;
         }
     }
 
